@@ -1,6 +1,9 @@
 using EventEase.Components;
+using EventEase.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<UserSessionService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

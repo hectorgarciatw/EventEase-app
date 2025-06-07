@@ -1,10 +1,64 @@
 ﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using EventEase.Services
+@inject UserSessionService Session
 
 <h3>Register for Event</h3>
 
-<p>Fill out the form to register for the Blazor Developers Meetup.</p>
+@if (submitted)
+{
+    <p>Thank you for registering, @Session.UserName!</p>
+}
+else
+{
+    <EditForm Model="@registrationModel" OnValidSubmit="HandleValidSubmit" FormName="registerForm">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-<!-- Simulación de formulario -->
-<input placeholder="Your name" class="form-control mb-2" />
-<input placeholder="Your email" class="form-control mb-2" />
-<button class="btn btn-primary">Submit</button>
+        <div>
+            <label>Name:</label>
+            <InputText @bind-Value="registrationModel.Name" />
+            <ValidationMessage For="@(() => registrationModel.Name)" />
+        </div>
+
+        <div>
+            <label>Email:</label>
+            <InputText @bind-Value="registrationModel.Email" />
+            <ValidationMessage For="@(() => registrationModel.Email)" />
+        </div>
+
+        <div>
+            <label>Phone:</label>
+            <InputText @bind-Value="registrationModel.Phone" />
+            <ValidationMessage For="@(() => registrationModel.Phone)" />
+        </div>
+
+        <button type="submit">Register</button>
+    </EditForm>
+}
+
+@code {
+    private RegistrationModel registrationModel = new();
+    private bool submitted = false;
+
+    private void HandleValidSubmit()
+    {
+        // Guardar datos en el servicio
+        Session.Register(registrationModel.Name, registrationModel.Email);
+        submitted = true;
+    }
+
+    public class RegistrationModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; } = "";
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Phone is required")]
+        [StringLength(15, MinimumLength = 7, ErrorMessage = "Phone must be between 7 and 15 characters")]
+        public string Phone { get; set; } = "";
+    }
+}
