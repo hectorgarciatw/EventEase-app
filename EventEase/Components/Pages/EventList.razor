@@ -1,9 +1,60 @@
 ﻿@page "/event-list"
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <h3>Event List</h3>
 
-<ul>
-    <li>
-        <NavLink href="/event-details">Blazor Developers Meetup - Details</NavLink>
-    </li>
-</ul>
+@if (events == null || events.Count == 0)
+{
+    <p>No events available.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ev in events)
+            {
+                <tr>
+                    <td>@ev.Name</td>
+                    <td>@ev.Date.ToString("yyyy-MM-dd")</td>
+                    <td>@ev.Location</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => NavigateToDetails(ev.Id)">
+                            View Details
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public class EventModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public DateTime Date { get; set; }
+        public string Location { get; set; } = "";
+    }
+
+    private List<EventModel> events = new()
+    {
+        new EventModel { Id = 1, Name = "Blazor Workshop", Date = DateTime.Today.AddDays(5), Location = "Online" },
+        new EventModel { Id = 2, Name = "Annual Tech Conference", Date = DateTime.Today.AddMonths(1), Location = "New York" },
+        new EventModel { Id = 3, Name = "Startup Meetup", Date = DateTime.Today.AddDays(15), Location = "San Francisco" }
+    };
+
+    private void NavigateToDetails(int eventId)
+    {
+        Navigation.NavigateTo($"/event-details/{eventId}");
+    }
+}

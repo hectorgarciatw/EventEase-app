@@ -1,9 +1,45 @@
-﻿@page "/event-details"
+﻿@page "/event-details/{EventId:int}"
 
 <h3>Event Details</h3>
 
-<p><strong>Event:</strong> Blazor Developers Meetup</p>
-<p><strong>Date:</strong> July 12, 2025</p>
-<p><strong>Location:</strong> TechHub, San Francisco</p>
+@if (eventItem == null)
+{
+    <p>Loading event details...</p>
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <h4>@eventItem.Name</h4>
+            <p><strong>Date:</strong> @eventItem.Date.ToString("yyyy-MM-dd")</p>
+            <p><strong>Location:</strong> @eventItem.Location</p>
+        </div>
+    </div>
+}
 
-<NavLink href="/register">Register Now</NavLink>
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private EventModel? eventItem;
+
+    public class EventModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public DateTime Date { get; set; }
+        public string Location { get; set; } = "";
+    }
+
+    private List<EventModel> events = new()
+    {
+        new EventModel { Id = 1, Name = "Blazor Workshop", Date = DateTime.Today.AddDays(5), Location = "Online" },
+        new EventModel { Id = 2, Name = "Annual Tech Conference", Date = DateTime.Today.AddMonths(1), Location = "New York" },
+        new EventModel { Id = 3, Name = "Startup Meetup", Date = DateTime.Today.AddDays(15), Location = "San Francisco" }
+    };
+
+    protected override void OnParametersSet()
+    {
+        eventItem = events.FirstOrDefault(e => e.Id == EventId);
+    }
+}
