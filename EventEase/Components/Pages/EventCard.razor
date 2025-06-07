@@ -1,0 +1,23 @@
+﻿@page "/event-card"
+@using Microsoft.AspNetCore.Components
+
+<h3>Event Card</h3>
+
+<div class="event-card">
+    <h4>@eventName</h4>
+    <p><strong>Date:</strong> @eventDate.ToShortDateString()</p>
+    <p><strong>Location:</strong> @eventLocation</p>
+
+    <nav>
+        <a href="/event-list">Back to Event List</a> |
+        <a href="/event-details">View Details</a> |
+        <a href="/register">Register</a>
+    </nav>
+</div>
+
+@code {
+    // Mock data
+    private string eventName = "Blazor Developers Meetup";
+    private DateTime eventDate = new DateTime(2025, 7, 12);
+    private string eventLocation = "TechHub, San Francisco";
+}
